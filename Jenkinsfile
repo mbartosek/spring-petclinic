@@ -58,8 +58,8 @@ spec:
         container(name: 'maven') {
           echo sh(script: 'env|sort', returnStdout: true)
           sh """
-                      mvn -B -ntp -T 2 package -DskipTests -DAPP_VERSION=${APP_VER}
-                      """
+                                mvn -B -ntp -T 2 package -DskipTests -DAPP_VERSION=${APP_VER}
+                                """
         }
 
       }
@@ -78,8 +78,8 @@ spec:
           steps {
             container(name: 'maven') {
               sh """
-                              mvn -B -ntp -T 2 test -DAPP_VERSION=${APP_VER}
-                            """
+                                            mvn -B -ntp -T 2 test -DAPP_VERSION=${APP_VER}
+                                          """
             }
 
             jacoco(execPattern: 'target/*.exec', classPattern: 'target/classes', sourcePattern: 'src/main/java', exclusionPattern: 'src/test*')
@@ -91,11 +91,11 @@ spec:
             container(name: 'maven') {
               withSonarQubeEnv('My SonarQube') {
                 sh """
-                                mvn sonar:sonar \
-                                  -Dsonar.projectKey=spring-petclinic \
-                                  -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                                  -Dsonar.login=${env.SONAR_AUTH_TOKEN}
-                                """
+                                                mvn sonar:sonar \
+                                                  -Dsonar.projectKey=spring-petclinic \
+                                                  -Dsonar.host.url=${env.SONAR_HOST_URL} \
+                                                  -Dsonar.login=${env.SONAR_AUTH_TOKEN}
+                                                """
               }
 
             }
@@ -130,19 +130,19 @@ spec:
       steps {
         container(name: 'maven') {
           sh """
-                      git config --global user.name $env.GIT_AUTHOR_NAME
-                      git config --global user.email $env.GIT_AUTHOR_EMAIL
-                      git clone https://$env.DEPLOY_GITREPO_USER:$env.DEPLOY_GITREPO_TOKEN@$env.DEPLOY_GITREPO_URL --branch=$env.DEPLOY_GITREPO_BRANCH deploy
-                      # After cloning
-                      cd deploy
-                      # update values.yaml
-                      sed -i -r 's,repository: (.+),repository: ${env.HARBOR_URL}/library/samples/spring-petclinic,' values.yaml
-                      sed -i 's/tag: v1.0.*/tag: v1.0.${env.BUILD_ID}/' values.yaml
-                      cat values.yaml
-                      git commit -am 'bump up version number'
-                      git remote set-url origin https://$env.DEPLOY_GITREPO_USER:$env.DEPLOY_GITREPO_TOKEN@$env.DEPLOY_GITREPO_URL
-                      git push origin main
-                    """
+                                git config --global user.name $env.GIT_AUTHOR_NAME
+                                git config --global user.email $env.GIT_AUTHOR_EMAIL
+                                git clone https://$env.DEPLOY_GITREPO_USER:$env.DEPLOY_GITREPO_TOKEN@$env.DEPLOY_GITREPO_URL --branch=$env.DEPLOY_GITREPO_BRANCH deploy
+                                # After cloning
+                                cd deploy
+                                # update values.yaml
+                                sed -i -r 's,repository: (.+),repository: ${env.HARBOR_URL}/library/samples/spring-petclinic,' values.yaml
+                                sed -i 's/tag: v1.0.*/tag: v1.0.${env.BUILD_ID}/' values.yaml
+                                cat values.yaml
+                                git commit -am 'bump up version number'
+                                git remote set-url origin https://$env.DEPLOY_GITREPO_USER:$env.DEPLOY_GITREPO_TOKEN@$env.DEPLOY_GITREPO_URL
+                                git push origin main
+                              """
         }
 
       }
